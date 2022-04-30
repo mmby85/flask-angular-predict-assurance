@@ -8,7 +8,7 @@ import os
 
 # Init app
 flask_app = Flask(__name__)
-CORS(flask_app)
+# CORS(flask_app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 # Database
 flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
@@ -16,10 +16,7 @@ flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Init db
 db = SQLAlchemy(flask_app)
 
-# uncomment next ligne to create database for the first time then run app.py and finilly comment it again, important !!!!!!!!
-# db.create_all()
-
-# Product Class/Model
+# Data Class/Model
 class Data(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   gender = db.Column(db.Integer)
@@ -41,11 +38,12 @@ class Data(db.Model):
     self.prediction = prediction
 
 
+
 def Valuepredictor(to_predict_list):
     to_predict = np.array(to_predict_list).reshape(1, 6)
     loaded_model = pickle.load(open("pima.pickle", "rb"))
-    # pred = loaded_model.predict(to_predict)
-    return  np.random.choice([0,1])#'pred[0]'
+    pred = loaded_model.predict(to_predict)
+    return  pred[0]
 
 @flask_app.route("/")
 def Home():
@@ -68,8 +66,8 @@ def predict():
         
         db.session.add(new_data)
         db.session.commit()
-        
-        return render_template("index.html")
+                
+        return render_template("index.html", prediction_text = prediction)
 
 
 @flask_app.route("/data", methods = ["GET"])
