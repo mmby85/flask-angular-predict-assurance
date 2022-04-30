@@ -1,5 +1,5 @@
 import numpy as np
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy 
 from flask_cors import CORS
 import pickle
@@ -8,7 +8,7 @@ import os
 
 # Init app
 flask_app = Flask(__name__)
-# CORS(flask_app)
+CORS(flask_app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 # Database
 flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
@@ -46,6 +46,7 @@ def Valuepredictor(to_predict_list):
     return  pred[0]
 
 @flask_app.route("/")
+@flask_app.route("/index")
 def Home():
     return render_template("index.html")
 
@@ -67,7 +68,8 @@ def predict():
         db.session.add(new_data)
         db.session.commit()
                 
-        return render_template("index.html", prediction_text = prediction)
+        resp = jsonify(success=True)
+        return resp
 
 
 @flask_app.route("/data", methods = ["GET"])
