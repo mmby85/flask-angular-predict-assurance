@@ -55,7 +55,6 @@ def Home():
 def predict():
     if request.method == "POST":
         to_predict_list = request.form.to_dict()
-        print(to_predict_list)
         to_predict_list = list(to_predict_list.values())
         to_predict_list = list(map(int, to_predict_list))
         pred = Valuepredictor(to_predict_list)
@@ -88,7 +87,6 @@ def get_label():
         data =  [{ elm : vars(d)[elm] for i, elm in enumerate(vars(d)) if i != 0} for d in data ]
         transform_data = {'gender': {0 : 'Femme' , 1 : 'Homme'}, 'licence':{1 : 'yes' , 0:'no'}, 'prev_insured':{1 : 'yes' , 0:'no'}, 'vehiicle_age': { 0:' between 1-2 Year ',1 :' less then 1 Year ' , 2:' more then 2 Year '} , 'vehicle_Damage':{1 : 'yes' , 0:'no'}}
         data =  [{ elm : transform_data[elm][d[elm]] if elm in transform_data.keys() else d[elm] for elm in d } for d in data ]
-        print(transform_data)
         return jsonify(data)
 
 if __name__ == "__main__":
